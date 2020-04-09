@@ -365,9 +365,11 @@ class Node
 		for (var i = this.filteredPieces.opp.length - 1; i >= 0; i--) {
 			var piece = this.filteredPieces.opp[i];
 			piece.getMoves(this.ground);
+			if (piece.moves.length !=0){
 			for (var j = piece.moves.length - 1; j >= 0; j--) {
 				var move = piece.moves[j];
 				children.push(new Node(piece,this.ground,move,this,this.oppColor,this.depth+1,this.targetdepth));
+			}
 			}
 		}
 		return children;
