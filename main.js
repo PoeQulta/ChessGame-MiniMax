@@ -208,4 +208,4 @@ activePiece = null;
 var isWhiteTurn = true;
 var AIopponent = new MiniMax(diffSlider.value);
 diffLabel.innerHTML = "Difficulty: "+diffSlider.value;
-//setInterval(AiTurn,100);
+setInterval(AiTurn,100);
