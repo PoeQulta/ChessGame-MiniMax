@@ -1,13 +1,51 @@
 <!DOCTYPE html>
 <html>
 	<HEAD>
-		<TITLE>Chess Game</TITLE>
+		<TITLE>Chess MiniMax</TITLE>
+		<style type="text/css">
+			.grid-container
+			{
+				display: grid;
+				grid-template-columns: 3vmax auto;
+				padding: 1vmax;
+			}
+			.grid-container > div
+			{
+  				text-align: center;
+  				padding: 10px 0;
+  				font-size: 20px;
+			}
+			.item1
+			{
+				padding: 0 0.5vmax;
+				grid-row-start:1; 
+				grid-row-end: 3;
+				
+				
+				
+			}
+			.item1 h1 
+			{
+				
+				color: rgb(255,0,0);
+				margin-top: 50%;
+				text-align: center;
+				font-size: 2vmax;
+			}
+		</style>
 	</HEAD>
 	<BODY>
-		<h1 id = "CheckLabel"></h1>
-		<div style="float: right; margin-right:10%; margin-bottom: 50%; margin-top:25%;">
+		
+		<div class="grid-container">
+			<div class="item1" id="CheckLabelContainer">
+				<h1 id="CheckLabel"></h1>
+			</div>
+			<div class="grid-item" id="canvasContainer"></div>
+			<div class="grid-item" id = "diffSliderContainer">
 			<h2 id="diffLabel"></h2>
 			<input type="range" id="DepthSlider" name="vol" min="2" max="5" value="2" onchange="ChangeDiff()">
+			</div>
+			
 		</div>
 		<script language="Javascript" type="text/javascript" src="classes.js"></script>
 		<script language="Javascript" type="text/javascript" src="main.js"></script>
