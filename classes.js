@@ -102,15 +102,18 @@ class Pawn extends Piece
 	{
 		this.moves = new Array();
 		var relativeMoves =[];
-		if (this.FirstMove && ground[this.y+2*this.orientation][this.x] == null)
-		{
-			if (this.y != 6 && this.y != 1 )
-				this.FirstMove = false;
-			else
-			relativeMoves.push([0,2*this.orientation]);
-		}
+		
 		if (ground[this.y+1*this.orientation][this.x] == null)
+		{
 			relativeMoves.push([0,this.orientation]);
+			if (this.FirstMove && ground[this.y+2*this.orientation][this.x] == null)
+			{
+				if (this.y != 6 && this.y != 1 )
+					this.FirstMove = false;
+				else
+					relativeMoves.push([0,2*this.orientation]);
+			}
+		}
 		if (this.x+1<=7 && ground[this.y+1*this.orientation][this.x+1] != null)
 			relativeMoves.push([1,this.orientation]);
 		if (this.x-1>=0 && ground[this.y+1*this.orientation][this.x-1] != null && ground[this.y+1*this.orientation][this.x-1].color !=this.color)
