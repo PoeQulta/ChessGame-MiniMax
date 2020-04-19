@@ -15,6 +15,22 @@ function copy(o)
    				return output;
    			}
 		}
+function copyNode(o) 
+		{
+   			var output, v, key;
+   			if (o == null)
+   				return null;
+   			else
+   			{
+   				output = Array.isArray(o) ? [] : new (o.constructor)(null,ground,null,null,'black',0,0);
+   				for (key in o)
+   				{
+      				 v = o[key];
+       				output[key] = (typeof v === "object") ? copyNode(v) : v;
+   				}
+   				return output;
+   			}
+		}
 //defines general piece Class
 class Piece
 {
@@ -347,10 +363,13 @@ class Node
 	// performes the move that define the node to generate game grid from parent node's grid
 	makeMove(ground)
 	{
-		
-		if (this.move == null)
+		if (this.move == null){
+			
 			return ground;
-		else{
+		}
+		else
+		{
+			try{
 			var newGround = ground;
 			newGround[this.piece.y][this.piece.x] = null;
 			this.piece.old = {x:this.piece.x,y:this.piece.y};
@@ -358,6 +377,11 @@ class Node
 			this.piece.y = this.move[1];
 			newGround[this.piece.y][this.piece.x]=this.piece;
 			return newGround;
+			}
+			catch(err)
+			{
+				console.log(this);
+			}
 		}
 	}
 	//generates child nodes (game scenarios) that stem from this move
@@ -397,7 +421,12 @@ class MiniMax
 			filteredPieces.opp.push(...row.filter(piece => piece != null && piece.color=='White'));
 		}
 		var FirstNode = new Node(null,playground,null,null,'White',0,this.targetdepth);
-		var decision = this.DoMiniMax(true,FirstNode);
+		var alpha = new Node(null,ground,null,null,'black',0,0);
+		var beta = new Node(null,ground,null,null,'',0,0);
+		alpha.score = - Infinity;
+		beta.score = Infinity;
+
+		var decision = this.DoMiniMax(true,FirstNode,alpha,beta);
 		var parent = decision.parent;
 		while(true)
 		{
@@ -410,31 +439,55 @@ class MiniMax
 		}
 	}
 	//Performs MiniMax Algorithm 
-	DoMiniMax(blackTurn,node)
+	DoMiniMax(blackTurn, node, alpha, beta)
 	{
+		//console.log([alpha,beta]);
 		if(node.children.length == 0)
 		{
 			return node;
 		}
-		var scenario =[]
-		for (var i = node.children.length - 1; i >= 0; i--) 
+		
+		
+		else if(blackTurn)
 		{
+			var bestVal = new Node(null,ground,null,null,'White',0,0);
+			bestVal.score = - Infinity;
+			for (var i = node.children.length - 1; i >= 0; i--) 
+			{
 				var curNode = node.children[i];
-				scenario.push(this.DoMiniMax(!blackTurn,curNode));
-		}
-		if(blackTurn)
-		{
-			
-			var maxValue = Math.max.apply(Math,scenario.map(function(o){return o.score}));
-			var selectedNode = scenario.find(object => object.score == maxValue);
-			return selectedNode;
+				var value = this.DoMiniMax(!blackTurn,curNode,alpha,beta);
+				var scenario =[bestVal,value];
+				var maxValue = Math.max.apply(Math,scenario.map(function(o){return o.score}));
+				bestVal = scenario.find(object => object.score == maxValue);
+				var alphaList = [alpha,bestVal];
+				maxValue = Math.max.apply(Math,alphaList.map(function(o){return o.score}));
+				alpha = alphaList.find(object => object.score == maxValue);
+				if (beta.score <= alpha.score)
+					break;
+				
+			}
 		}
 		else
 		{
-			var minValue = Math.min.apply(Math,scenario.map(function(o){return o.score}));
-			var selectedNode = scenario.find(object => object.score == minValue);
-			return selectedNode;
+			var bestVal = new Node(null,ground,null,null,'White',0,0);
+			bestVal.score = Infinity;
+			for (var i = node.children.length - 1; i >= 0; i--) 
+			{
+				var curNode = node.children[i];
+				var value = this.DoMiniMax(!blackTurn,curNode,alpha,beta);
+				var scenario =[bestVal,value];
+				var minValue = Math.min.apply(Math,scenario.map(function(o){return o.score}));
+				bestVal = scenario.find(object => object.score == minValue);
+				var betaList = [beta,bestVal];
+				minValue = Math.min.apply(Math,betaList.map(function(o){return o.score}));
+				beta = betaList.find(object => object.score == minValue);
+				if (beta.score <= alpha.score)
+					break;
+				
+			}
+			
 		}
+		return bestVal;
 	}
 }
 
